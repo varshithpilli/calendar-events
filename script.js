@@ -38,7 +38,7 @@ class CalendarEventPlanner {
         if (savedEvents) {
             this.events = JSON.parse(savedEvents);
             this.renderEvents();
-            this.renderCalendar(); // Refresh calendar to show event indicators
+            this.renderCalendar();
         }
     }
 
@@ -55,18 +55,15 @@ class CalendarEventPlanner {
         const year = this.currentDate.getFullYear();
         const month = this.currentDate.getMonth();
         
-        // Update month/year display
         const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 
                           'July', 'August', 'September', 'October', 'November', 'December'];
         document.getElementById('currentMonth').textContent = `${monthNames[month]} ${year}`;
 
-        // Get first day of month and total days
         const firstDay = new Date(year, month, 1);
         const lastDay = new Date(year, month + 1, 0);
         const totalDays = lastDay.getDate();
         const startingDay = firstDay.getDay();
 
-        // Get days from previous month
         const prevMonthLastDay = new Date(year, month, 0).getDate();
         const prevMonthDays = Array.from({ length: startingDay }, (_, i) => ({
             day: prevMonthLastDay - startingDay + i + 1,
@@ -74,14 +71,12 @@ class CalendarEventPlanner {
             date: new Date(year, month - 1, prevMonthLastDay - startingDay + i + 1)
         }));
 
-        // Current month days
         const currentMonthDays = Array.from({ length: totalDays }, (_, i) => ({
             day: i + 1,
             isCurrentMonth: true,
             date: new Date(year, month, i + 1)
         }));
 
-        // Next month days
         const remainingDays = 42 - (prevMonthDays.length + currentMonthDays.length);
         const nextMonthDays = Array.from({ length: remainingDays }, (_, i) => ({
             day: i + 1,
@@ -89,10 +84,8 @@ class CalendarEventPlanner {
             date: new Date(year, month + 1, i + 1)
         }));
 
-        // Combine all days
         const allDays = [...prevMonthDays, ...currentMonthDays, ...nextMonthDays];
 
-        // Render calendar
         const calendarDays = document.getElementById('calendarDays');
         calendarDays.innerHTML = allDays.map(({ day, isCurrentMonth, date }) => {
             const isToday = this.isSameDay(date, new Date());
@@ -150,7 +143,7 @@ class CalendarEventPlanner {
         this.events.push(newEvent);
         this.saveEvents();
         this.renderEvents();
-        this.renderCalendar(); // Refresh calendar to show new event indicator
+        this.renderCalendar();
         this.form.reset();
         this.modal.classList.remove('show');
     }
@@ -159,7 +152,7 @@ class CalendarEventPlanner {
         this.events = this.events.filter(event => event.id !== id);
         this.saveEvents();
         this.renderEvents();
-        this.renderCalendar(); // Refresh calendar to remove event indicator
+        this.renderCalendar();
     }
 
     calculateCountdown(date, time) {
@@ -190,7 +183,6 @@ class CalendarEventPlanner {
     }
 
     renderEvents() {
-        // Sort events by date and time
         const sortedEvents = [...this.events].sort((a, b) => {
             const dateA = new Date(`${a.date}T${a.time}`);
             const dateB = new Date(`${b.date}T${b.time}`);
